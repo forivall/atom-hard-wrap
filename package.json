@@ -9,7 +9,7 @@
   "activationCommands": {
     "atom-text-editor": "hard-wrap:execute"
   },
-  "repository": "https://github.com/forivall/hard-wrap",
+  "repository": "https://github.com/forivall/atom-hard-wrap",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
