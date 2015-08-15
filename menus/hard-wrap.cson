@@ -2,8 +2,8 @@
 'context-menu':
   'atom-text-editor': [
     {
-      'label': 'Toggle hard-wrap'
-      'command': 'hard-wrap:toggle'
+      'label': 'Hard wrap selected text'
+      'command': 'hard-wrap:execute'
     }
   ]
 'menu': [
@@ -14,7 +14,7 @@
       'submenu': [
         {
           'label': 'Toggle'
-          'command': 'hard-wrap:toggle'
+          'command': 'hard-wrap:execute'
         }
       ]
     ]

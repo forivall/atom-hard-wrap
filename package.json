@@ -2,17 +2,19 @@
   "name": "hard-wrap",
   "main": "./lib/hard-wrap",
   "version": "0.0.0",
-  "description": "A short description of your package",
+  "description": "Hard wraps your text; works with multi-wrap-guide",
   "keywords": [
+    "wrap"
   ],
   "activationCommands": {
-    "atom-workspace": "hard-wrap:toggle"
+    "atom-text-editor": "hard-wrap:execute"
   },
-  "repository": "https://github.com/atom/hard-wrap",
+  "repository": "https://github.com/forivall/hard-wrap",
   "license": "MIT",
   "engines": {
     "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
+    "underscore-plus": "^1.6.6"
   }
 }
