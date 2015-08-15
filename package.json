@@ -1,0 +1,18 @@
+{
+  "name": "hard-wrap",
+  "main": "./lib/hard-wrap",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [
+  ],
+  "activationCommands": {
+    "atom-workspace": "hard-wrap:toggle"
+  },
+  "repository": "https://github.com/atom/hard-wrap",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
