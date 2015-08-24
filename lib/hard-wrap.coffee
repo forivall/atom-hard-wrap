@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-{max} = require 'underscore-plus'
+{max} = _ = require 'underscore-plus'
 
 module.exports = AtomHardWrap =
   subscriptions: null
@@ -47,19 +47,6 @@ module.exports = AtomHardWrap =
     catch e
       return atom.config.get('editor.preferredLineLength')
 
-  wrapText: (text, lineLength) ->
-    wrapped = ""
-    words = text.split(/\s+/)
-    charcount = 0
-    for w in words
-      n = w.length + 1
-      if charcount + n >= lineLength
-        wrapped += "\n"
-        charcount = 0
-      wrapped += w + " "
-      charcount += n
-    return wrapped
-
   reflowSelection: ->
     editor = atom.workspace.getActiveTextEditor()
     for range in editor.getSelectedBufferRanges()
@@ -72,3 +59,51 @@ module.exports = AtomHardWrap =
       wrapColumn = @getWrapColumn(range, editor)
       reflowedText = @reflow(editor.getTextInBufferRange(range), {wrapColumn})
       editor.getBuffer().setTextInRange(range, reflowedText)
+
+  # copied from atom/autoflow
+  # TODO: move this to a node module, submit PR to autoflow to use that.
+  reflow: (text, {wrapColumn}) ->
+    paragraphs = []
+    paragraphBlocks = text.split(/\n\s*\n/g)
+
+    for block in paragraphBlocks
+
+      # TODO: this could be more language specific. Use the actual comment char.
+      linePrefix = block.match(/^\s*[\/#*-]*\s*/g)[0]
+      blockLines = block.split('\n')
+
+      if linePrefix
+        escapedLinePrefix = _.escapeRegExp(linePrefix)
+        blockLines = blockLines.map (blockLine) ->
+          blockLine.replace(///^#{escapedLinePrefix}///, '')
+
+      blockLines = blockLines.map (blockLine) ->
+        blockLine.replace(/^\s+/, '')
+
+      lines = []
+      currentLine = []
+      currentLineLength = linePrefix.length
+
+      for segment in @segmentText(blockLines.join(' '))
+        if @wrapSegment(segment, currentLineLength, wrapColumn)
+          lines.push(linePrefix + currentLine.join(''))
+          currentLine = []
+          currentLineLength = linePrefix.length
+        currentLine.push(segment)
+        currentLineLength += segment.length
+      lines.push(linePrefix + currentLine.join(''))
+
+      paragraphs.push(lines.join('\n').replace(/\s+\n/g, '\n'))
+
+    paragraphs.join('\n\n')
+
+  wrapSegment: (segment, currentLineLength, wrapColumn) ->
+    /\w/.test(segment) and
+      (currentLineLength + segment.length > wrapColumn) and
+      (currentLineLength > 0 or segment.length < wrapColumn)
+
+  segmentText: (text) ->
+    segments = []
+    re = /[\s]+|[^\s]+/g
+    segments.push(match[0]) while match = re.exec(text)
+    segments
