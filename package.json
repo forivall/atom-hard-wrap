@@ -7,7 +7,7 @@
     "wrap"
   ],
   "activationCommands": {
-    "atom-text-editor": "hard-wrap:execute"
+    "atom-text-editor": "hard-wrap:reflow-selection"
   },
   "repository": "https://github.com/forivall/atom-hard-wrap",
   "license": "MIT",

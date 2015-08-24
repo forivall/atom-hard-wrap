@@ -3,7 +3,7 @@
   'atom-text-editor': [
     {
       'label': 'Hard wrap selected text'
-      'command': 'hard-wrap:execute'
+      'command': 'hard-wrap:reflow-selection'
     }
   ]
 'menu': [
@@ -14,7 +14,7 @@
       'submenu': [
         {
           'label': 'Toggle'
-          'command': 'hard-wrap:execute'
+          'command': 'hard-wrap:reflow-selection'
         }
       ]
     ]

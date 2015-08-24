@@ -10,7 +10,7 @@ module.exports = AtomHardWrap =
 
     # Register command that toggles this view
     @subscriptions.add atom.commands.add 'atom-text-editor',
-      'hard-wrap:execute': => @execute()
+      'hard-wrap:reflow-selection': => @reflowSelection()
 
   deactivate: ->
     @modalPanel.destroy()
