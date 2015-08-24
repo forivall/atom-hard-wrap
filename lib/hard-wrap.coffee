@@ -49,16 +49,17 @@ module.exports = AtomHardWrap =
 
   reflowSelection: ->
     editor = atom.workspace.getActiveTextEditor()
-    for range in editor.getSelectedBufferRanges()
-      # selection.selectToBeginningOfLine()
-      # selection.selectToEndOfLine()
-      if range.isEmpty()
-        range = editor.languageMode.
-          rowRangeForParagraphAtBufferRow(range.getRows()[0])
+    editor.transact =>
+      for range in editor.getSelectedBufferRanges()
+        # selection.selectToBeginningOfLine()
+        # selection.selectToEndOfLine()
+        if range.isEmpty()
+          range = editor.languageMode.
+            rowRangeForParagraphAtBufferRow(range.getRows()[0])
 
-      wrapColumn = @getWrapColumn(range, editor)
-      reflowedText = @reflow(editor.getTextInBufferRange(range), {wrapColumn})
-      editor.getBuffer().setTextInRange(range, reflowedText)
+        wrapColumn = @getWrapColumn(range, editor)
+        reflowedText = @reflow(editor.getTextInBufferRange(range), {wrapColumn})
+        editor.getBuffer().setTextInRange(range, reflowedText)
 
   # copied from atom/autoflow
   # TODO: move this to a node module, submit PR to autoflow to use that.
