@@ -1,5 +1,9 @@
-# hard-wrap package
+# Hard-wrap package
 
-A short description of your package.
+Format the current selection to have lines no longer than 80 characters using
+<kbd>cmd/ctrl-alt-y</kbd>. If nothing is selected, the current paragraph will be
+reflowed.
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+This packages uses the config value of `editor.preferredLineLength` when set.
+When the multi-wrap-guide package is used, then the currently set column guide
+is used.
