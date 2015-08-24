@@ -2,9 +2,10 @@
   "name": "hard-wrap",
   "main": "./lib/hard-wrap",
   "version": "0.1.0",
-  "description": "Hard wraps your text; works with multi-wrap-guide",
+  "description": "Hard wraps (aka autoflow) your text; works with multi-wrap-guide",
   "keywords": [
-    "wrap"
+    "wrap",
+    "autoflow"
   ],
   "activationCommands": {
     "atom-text-editor": "hard-wrap:reflow-selection"

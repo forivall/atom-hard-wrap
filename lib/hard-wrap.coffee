@@ -16,27 +16,28 @@ module.exports = AtomHardWrap =
     @modalPanel.destroy()
     @subscriptions.dispose()
 
-  getMaxLineLength: (selection, textEditor) ->
+  getMaxLineLength: (range, textEditor) ->
     maxLen = 0
-    for row in selection.getBufferRange().getRows()
+    for row in range.getBufferRange().getRows()
       len = textEditor.lineTextForBufferRow(row).length
       if len > maxLen
         maxLen = len
     return maxLen
 
-  getWrapColumn: (selection, textEditor) ->
+  getWrapColumn: (range, textEditor) ->
     unless atom.packages.isPackageLoaded('multi-wrap-guide')
       return atom.config.get('editor.preferredLineLength')
 
     try
       textEditorView = atom.views.getView(textEditor)
-      wrapGuideView = textEditorView.rootElement.querySelector('.multi-wrap-guide-view')
+      wrapGuideView =
+        textEditorView.rootElement.querySelector('.multi-wrap-guide-view')
       columns = wrapGuideView.spacePenView.columns
       if columns.length is 0
         return atom.config.get('editor.preferredLineLength')
       if columns.length is 1
         return columns[0]
-      maxLineLength = @getMaxLineLength(selection, textEditor)
+      maxLineLength = @getMaxLineLength(range, textEditor)
       maxCol = 0
       for col in columns
         if col < maxLineLength and col > maxCol
@@ -61,14 +62,17 @@ module.exports = AtomHardWrap =
       charcount += n
     return wrapped
 
-  execute: ->
+  reflowSelection: ->
     console.log 'AtomHardWrap was executed!'
 
-    textEditor = atom.workspace.getActiveTextEditor()
-    for selection in textEditor.getSelections()
-      selection.selectToBeginningOfLine()
-      selection.selectToEndOfLine()
+    editor = atom.workspace.getActiveTextEditor()
+    for range in editor.getSelectedBufferRanges()
+      # selection.selectToBeginningOfLine()
+      # selection.selectToEndOfLine()
+      if range.isEmpty()
+        range = editor.languageMode.
+          rowRangeForParagraphAtBufferRow(range.getRows()[0])
 
-      wrapColumn = @getWrapColumn(selection, textEditor)
-      wrappedText = @wrapText(selection.getText(), wrapColumn)
-      selection.insertText(wrappedText, {select: true})
+      wrapColumn = @getWrapColumn(range, editor)
+      wrappedText = @wrapText(editor.getTextInBufferRange(range), wrapColumn)
+      editor.getBuffer().setTextInRange(range, wrappedText)
