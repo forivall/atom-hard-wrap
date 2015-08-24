@@ -70,5 +70,5 @@ module.exports = AtomHardWrap =
           rowRangeForParagraphAtBufferRow(range.getRows()[0])
 
       wrapColumn = @getWrapColumn(range, editor)
-      wrappedText = @wrapText(editor.getTextInBufferRange(range), wrapColumn)
-      editor.getBuffer().setTextInRange(range, wrappedText)
+      reflowedText = @reflow(editor.getTextInBufferRange(range), {wrapColumn})
+      editor.getBuffer().setTextInRange(range, reflowedText)
