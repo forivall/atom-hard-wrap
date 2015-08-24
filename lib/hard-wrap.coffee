@@ -2,7 +2,6 @@
 {max} = require 'underscore-plus'
 
 module.exports = AtomHardWrap =
-  modalPanel: null
   subscriptions: null
 
   activate: (state) ->
@@ -13,7 +12,6 @@ module.exports = AtomHardWrap =
       'hard-wrap:reflow-selection': => @reflowSelection()
 
   deactivate: ->
-    @modalPanel.destroy()
     @subscriptions.dispose()
 
   getMaxLineLength: (range, textEditor) ->
@@ -63,8 +61,6 @@ module.exports = AtomHardWrap =
     return wrapped
 
   reflowSelection: ->
-    console.log 'AtomHardWrap was executed!'
-
     editor = atom.workspace.getActiveTextEditor()
     for range in editor.getSelectedBufferRanges()
       # selection.selectToBeginningOfLine()
