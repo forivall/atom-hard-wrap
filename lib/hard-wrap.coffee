@@ -56,6 +56,8 @@ module.exports = AtomHardWrap =
         if range.isEmpty()
           range = editor.languageMode.
             rowRangeForParagraphAtBufferRow(range.getRows()[0])
+          if not range?
+            continue # nothing to do here
 
         wrapColumn = @getWrapColumn(range, editor)
         reflowedText = @reflow(editor.getTextInBufferRange(range), {wrapColumn})
