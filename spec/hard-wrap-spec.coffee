@@ -1,62 +1,134 @@
-AtomHardWrap = require '../lib/hard-wrap'
 
-# Use the command `window:run-package-specs` (cmd-alt-ctrl-p) to run specs.
-#
-# To run a specific `it` or `describe` block add an `f` to the front (e.g. `fit`
-# or `fdescribe`). Remove the `f` to unfocus the block.
+fs = require('fs')
+path = require('path')
+trimEnd = (s) -> s.replace(/[\s\uFEFF\xA0]+$/g, '')
 
-describe "AtomHardWrap", ->
-  [workspaceElement, activationPromise] = []
+describe "AtomHardWrap package", ->
+  [hardwrap, editor, editorElement] = []
+  tabLength = 4
 
   beforeEach ->
-    workspaceElement = atom.views.getView(atom.workspace)
-    activationPromise = atom.packages.activatePackage('hard-wrap')
+    activationPromise = null
 
-  describe "when the hard-wrap:toggle event is triggered", ->
-    it "hides and shows the modal panel", ->
-      # Before the activation event the view is not on the DOM, and no panel
-      # has been created
-      expect(workspaceElement.querySelector('.hard-wrap')).not.toExist()
+    waitsForPromise ->
+      atom.workspace.open()
 
-      # This is an activation event, triggering it will cause the package to be
-      # activated.
-      atom.commands.dispatch workspaceElement, 'hard-wrap:toggle'
+    runs ->
+      editor = atom.workspace.getActiveTextEditor()
+      editorElement = atom.views.getView(editor)
 
-      waitsForPromise ->
-        activationPromise
+      atom.config.set('editor.preferredLineLength', 30)
+      atom.config.set('editor.tabLength', tabLength)
 
-      runs ->
-        expect(workspaceElement.querySelector('.hard-wrap')).toExist()
+      activationPromise = atom.packages.activatePackage('hard-wrap')
 
-        atomHardWrapElement = workspaceElement.querySelector('.hard-wrap')
-        expect(atomHardWrapElement).toExist()
+      atom.commands.dispatch editorElement, 'hard-wrap:reflow-selection'
 
-        atomHardWrapPanel = atom.workspace.panelForItem(atomHardWrapElement)
-        expect(atomHardWrapPanel.isVisible()).toBe true
-        atom.commands.dispatch workspaceElement, 'hard-wrap:toggle'
-        expect(atomHardWrapPanel.isVisible()).toBe false
+    waitsForPromise ->
+      activationPromise
 
-    it "hides and shows the view", ->
-      # This test shows you an integration test testing at the view level.
+  describe "duplicated behaviour from autoflow", ->
 
-      # Attaching the workspaceElement to the DOM is required to allow the
-      # `toBeVisible()` matchers to work. Anything testing visibility or focus
-      # requires that the workspaceElement is on the DOM. Tests that attach the
-      # workspaceElement to the DOM are generally slower than those off DOM.
-      jasmine.attachToDOM(workspaceElement)
+    it "uses the preferred line length based on the editor's scope", ->
+      atom.config.set('editor.preferredLineLength', 4, scopeSelector: '.text.plain.null-grammar')
+      editor.setText("foo bar")
+      editor.selectAll()
+      atom.commands.dispatch editorElement, 'hard-wrap:reflow-selection'
 
-      expect(workspaceElement.querySelector('.hard-wrap')).not.toExist()
+      expect(editor.getText()).toEqual """
+        foo
+        bar
+      """
 
-      # This is an activation event, triggering it causes the package to be
-      # activated.
-      atom.commands.dispatch workspaceElement, 'hard-wrap:toggle'
+    it "rearranges line breaks in the current selection to ensure lines are shorter than config.editor.preferredLineLength honoring tabLength", ->
+      editor.setText "\t\tThis is the first paragraph and it is longer than the preferred line length so it should be reflowed.\n\n\t\tThis is a short paragraph.\n\n\t\tAnother long paragraph, it should also be reflowed with the use of this single command."
 
-      waitsForPromise ->
-        activationPromise
+      editor.selectAll()
+      atom.commands.dispatch editorElement, 'hard-wrap:reflow-selection'
 
-      runs ->
-        # Now we can test for view visibility
-        atomHardWrapElement = workspaceElement.querySelector('.hard-wrap')
-        expect(atomHardWrapElement).toBeVisible()
-        atom.commands.dispatch workspaceElement, 'hard-wrap:toggle'
-        expect(atomHardWrapElement).not.toBeVisible()
+      exedOut = editor.getText().replace(/\t/g, Array(tabLength+1).join 'X')
+      expect(exedOut).toEqual "XXXXXXXXThis is the first\nXXXXXXXXparagraph and it is\nXXXXXXXXlonger than the\nXXXXXXXXpreferred line length\nXXXXXXXXso it should be\nXXXXXXXXreflowed.\n\nXXXXXXXXThis is a short\nXXXXXXXXparagraph.\n\nXXXXXXXXAnother long\nXXXXXXXXparagraph, it should\nXXXXXXXXalso be reflowed with\nXXXXXXXXthe use of this single\nXXXXXXXXcommand."
+
+    it "rearranges line breaks in the current selection to ensure lines are shorter than config.editor.preferredLineLength", ->
+      editor.setText """
+        This is the first paragraph and it is longer than the preferred line length so it should be reflowed.
+
+        This is a short paragraph.
+
+        Another long paragraph, it should also be reflowed with the use of this single command.
+      """
+
+      editor.selectAll()
+      atom.commands.dispatch editorElement, 'hard-wrap:reflow-selection'
+
+      expect(editor.getText()).toEqual """
+        This is the first paragraph
+        and it is longer than the
+        preferred line length so it
+        should be reflowed.
+
+        This is a short paragraph.
+
+        Another long paragraph, it
+        should also be reflowed with
+        the use of this single
+        command.
+      """
+
+    it "reflows the current paragraph if nothing is selected", ->
+      editor.setText """
+        This is a preceding paragraph, which shouldn't be modified by a reflow of the following paragraph.
+
+        The quick brown fox jumps over the lazy
+        dog. The preceding sentence contains every letter
+        in the entire English alphabet, which has absolutely no relevance
+        to this test.
+
+        This is a following paragraph, which shouldn't be modified by a reflow of the preciding paragraph.
+
+      """
+
+      editor.setCursorBufferPosition([3, 5])
+      atom.commands.dispatch editorElement, 'hard-wrap:reflow-selection'
+
+      expect(editor.getText()).toEqual """
+        This is a preceding paragraph, which shouldn't be modified by a reflow of the following paragraph.
+
+        The quick brown fox jumps over
+        the lazy dog. The preceding
+        sentence contains every letter
+        in the entire English
+        alphabet, which has absolutely
+        no relevance to this test.
+
+        This is a following paragraph, which shouldn't be modified by a reflow of the preciding paragraph.
+
+      """
+
+    it "allows for single words that exceed the preferred wrap column length", ->
+      editor.setText("this-is-a-super-long-word-that-shouldn't-break-autoflow and these are some smaller words")
+
+      editor.selectAll()
+      atom.commands.dispatch editorElement, 'hard-wrap:reflow-selection'
+
+      expect(editor.getText()).toEqual """
+        this-is-a-super-long-word-that-shouldn't-break-autoflow
+        and these are some smaller
+        words
+      """
+
+  describe "reflowing plain text", ->
+    beforeEach ->
+      hardwrap = require("../lib/hard-wrap")
+
+    fixturesBase = path.join(__dirname, "fixtures/plain-text")
+    fixtureDirs = fs.readdirSync(fixturesBase)
+
+    fixtureDirs.forEach (fixtureDir) -> it fixtureDir.replace(/-/g, ' '), ->
+      fixtureBase = path.join(fixturesBase, fixtureDir)
+      text = trimEnd fs.readFileSync(path.join(fixtureBase, 'in.txt'), 'utf-8')
+      res = trimEnd fs.readFileSync(path.join(fixtureBase, 'out.txt'), 'utf-8')
+      options = wrapColumn: 80
+      try options = require("./" + path.join("fixtures/plain-text", fixtureDir, "options.json"))
+
+      expect(hardwrap.reflow(text, options)).toEqual res

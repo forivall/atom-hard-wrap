@@ -1,0 +1,4 @@
+This is the first line and it is longer than the preferred line length so it
+should be reflowed. This is a short line which should be reflowed with the
+following line. Another long line, it should also be reflowed with everything
+above it when it is all reflowed.
