@@ -17,5 +17,19 @@
   },
   "dependencies": {
     "underscore-plus": "^1.6.6"
+  },
+  "devDependencies": {
+    "babel": "^5.8.35",
+    "babel-eslint": "^4.1.6",
+    "eslint": "^1.10.3"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint"
+  },
+  "babel": {
+    "stage": 2,
+    "optional": [
+      "optimisation.flow.forOf"
+    ]
   }
 }
