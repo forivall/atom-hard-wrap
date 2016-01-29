@@ -117,6 +117,8 @@ describe "AtomHardWrap package", ->
         words
       """
 
+  it "wraps based on length of entire line, not just beginning of selection"
+
   describe "reflowing plain text", ->
     beforeEach ->
       hardwrap = require("../lib/hard-wrap")
@@ -132,3 +134,7 @@ describe "AtomHardWrap package", ->
       try options = require("./" + path.join("fixtures/plain-text", fixtureDir, "options.json"))
 
       expect(hardwrap.reflow(text, options)).toEqual res
+
+  describe "reflowing markdown", ->
+    it "respects lists"
+    it "inserts blockquote prefix"
