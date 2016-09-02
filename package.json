@@ -1,7 +1,7 @@
 {
   "name": "hard-wrap",
   "main": "./lib/hard-wrap",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Hard wraps (aka autoflow) your text; works with multi-wrap-guide",
   "keywords": [
     "wrap",
