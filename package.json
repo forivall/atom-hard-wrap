@@ -20,7 +20,7 @@
     "underscore-plus": "^1.6.6"
   },
   "devDependencies": {
-    "babel": "^5.8.35",
+    "babel": "^6.23.0",
     "babel-eslint": "^4.1.6",
     "eslint": "^3.8.0"
   },
