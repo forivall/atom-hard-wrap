@@ -22,7 +22,7 @@
   "devDependencies": {
     "babel": "^5.8.35",
     "babel-eslint": "^4.1.6",
-    "eslint": "^3.8.0"
+    "eslint": "^3.17.0"
   },
   "eslintConfig": {
     "parser": "babel-eslint"
