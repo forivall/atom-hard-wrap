@@ -1,6 +1,6 @@
 {
   "name": "hard-wrap",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Hard wraps (aka autoflow) your text; works with multi-wrap-guide",
   "keywords": [
     "autoflow",
