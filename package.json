@@ -1,36 +1,49 @@
 {
   "name": "hard-wrap",
-  "main": "./lib/hard-wrap",
   "version": "1.1.0",
   "description": "Hard wraps (aka autoflow) your text; works with multi-wrap-guide",
   "keywords": [
-    "wrap",
-    "autoflow"
+    "autoflow",
+    "wrap"
   ],
-  "activationCommands": {
-    "atom-text-editor": "hard-wrap:reflow-selection"
-  },
-  "repository": "https://github.com/forivall/atom-hard-wrap",
   "license": "MIT",
-  "engines": {
-    "atom": ">=1.0.0 <2.0.0"
+  "main": "./lib/hard-wrap",
+  "repository": "https://github.com/forivall/atom-hard-wrap",
+  "babel": {
+    "babelrc": false,
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "sourceMaps": "inline"
   },
   "dependencies": {
-    "repeating": "^2.0.0",
+    "repeating": "^3.0.0",
     "underscore-plus": "^1.6.6"
   },
   "devDependencies": {
-    "babel": "^5.8.35",
-    "babel-eslint": "^4.1.6",
-    "eslint": "^3.8.0"
+    "babel": "^6.23.0",
+    "babel-eslint": "^8.2.1",
+    "eslint-config-mxo": "^0.5.4",
+    "xo": "^0.18.2"
   },
-  "eslintConfig": {
-    "parser": "babel-eslint"
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
   },
-  "babel": {
-    "stage": 2,
-    "optional": [
-      "optimisation.flow.forOf"
+  "activationCommands": {
+    "atom-text-editor": "hard-wrap:reflow-selection"
+  },
+  "xo": {
+    "extends": "mxo/ava",
+    "parser": "babel-eslint",
+    "globals": [
+      "atom"
     ]
   }
 }
