@@ -1,3 +1,7 @@
+NOTICE: I'm no longer using atom as my primary text editor, so I'm not really
+maintaining this anymore. I'll still review PRs, and if someone wants to take
+over, I'll give you the commit bit. Thanks for using atom-hard-wrap!
+
 # Hard-wrap package
 
 Format the current selection to have lines no longer than 80 characters using
