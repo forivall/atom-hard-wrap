@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "babel": "^6.23.0",
-    "babel-eslint": "^8.2.1",
+    "babel-eslint": "^8.2.6",
     "eslint-config-mxo": "^0.5.4",
     "xo": "^0.18.2"
   },
