@@ -24,7 +24,7 @@
     "sourceMaps": "inline"
   },
   "dependencies": {
-    "escape-regex-string": "^1.0.4",
+    "escape-regex-string": "^1.0.6",
     "repeating": "^3.0.0"
   },
   "devDependencies": {
